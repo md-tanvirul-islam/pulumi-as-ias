@@ -28,16 +28,27 @@ const publicSubnet = new aws.ec2.Subnet("public-subnet", {
     }
 });
 
-const ec2Instance1 = new aws.ec2.Instance("instance-1", {
-    ami: "ami-01938df366ac2d954",
-    instanceType: "t2.micro",
-    subnetId: publicSubnet.id,
-    associatePublicIpAddress: true,
-    tags: {
-        Name: "instance-1",
-        ...customTag
-    }
-})
+const instances = [];
+
+for (let i = 1; i <= 3; i++) {
+    const instance = new aws.ec2.Instance("instance-1",
+        {
+            ami: "ami-01938df366ac2d954",
+            instanceType: "t2.micro",
+            subnetId: publicSubnet.id,
+            associatePublicIpAddress: true,
+            privateIp: `10.0.1.${5 + i}`,
+            keyName: "tan-key",
+            tags: {
+                Name: `instance-${i}`,
+                ...customTag
+            }
+        }
+    );
+
+    instances.push(instance);
+}
+
 
 export const vpcId = newVpc.id
 export const publicSubnetId = publicSubnet.id
